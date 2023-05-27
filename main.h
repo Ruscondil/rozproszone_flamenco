@@ -24,11 +24,32 @@ extern int ackCount;
 extern pthread_t threadKom;
 extern int lamport;
 
+extern int gitarzysci;
+extern int tancerki;
+extern int krytycy;
+extern int sale;
 
+typedef enum
+{
+    Gitarzysta,
+    Tancerka,
+    Krytyk
+} role;
+
+typedef enum
+{
+    searchingForPartner,
+    searchingForCritic,
+    searchingForRoom,
+    dancing
+} states;
+
+extern roles role;
+extern states state;
 
 /* macro debug - działa jak printf, kiedy zdefiniowano
-   DEBUG, kiedy DEBUG niezdefiniowane działa jak instrukcja pusta 
-   
+   DEBUG, kiedy DEBUG niezdefiniowane działa jak instrukcja pusta
+
    używa się dokładnie jak printfa, tyle, że dodaje kolorków i automatycznie
    wyświetla rank
 
@@ -36,22 +57,21 @@ extern int lamport;
 
    w printfie: definicja znaku specjalnego "%c[%d;%dm [%d]" escape[styl bold/normal;kolor [RANK]
                                            FORMAT:argumenty doklejone z wywołania debug poprzez __VA_ARGS__
-					   "%c[%d;%dm"       wyczyszczenie atrybutów    27,0,37
+                       "%c[%d;%dm"       wyczyszczenie atrybutów    27,0,37
                                             UWAGA:
-                                                27 == kod ascii escape. 
+                                                27 == kod ascii escape.
                                                 Pierwsze %c[%d;%dm ( np 27[1;10m ) definiuje styl i kolor literek
                                                 Drugie   %c[%d;%dm czyli 27[0;37m przywraca domyślne kolory i brak pogrubienia (bolda)
                                                 ...  w definicji makra oznacza, że ma zmienną liczbę parametrów
-                                            
+
 */
 #ifdef DEBUG
-#define debug(FORMAT,...) printf("%c[%d;%dm [%d] [clock: %d]: " FORMAT "%c[%d;%dm\n",  27, (1+(rank/7))%2, 31+(6+rank)%7, rank, lamport, ##__VA_ARGS__, 27,0,37);
+#define debug(FORMAT, ...) printf("%c[%d;%dm [%d] [clock: %d]: " FORMAT "%c[%d;%dm\n", 27, (1 + (rank / 7)) % 2, 31 + (6 + rank) % 7, rank, lamport, ##__VA_ARGS__, 27, 0, 37);
 #else
 #define debug(...) ;
 #endif
 
 // makro println - to samo co debug, ale wyświetla się zawsze
-#define println(FORMAT,...) printf("%c[%d;%dm [%d] [clock: %d]: " FORMAT "%c[%d;%dm\n",  27, (1+(rank/7))%2, 31+(6+rank)%7, rank, lamport, ##__VA_ARGS__, 27,0,37);
-
+#define println(FORMAT, ...) printf("%c[%d;%dm [%d] [clock: %d]: " FORMAT "%c[%d;%dm\n", 27, (1 + (rank / 7)) % 2, 31 + (6 + rank) % 7, rank, lamport, ##__VA_ARGS__, 27, 0, 37);
 
 #endif
