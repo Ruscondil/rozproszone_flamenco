@@ -16,6 +16,7 @@ state_t stan = InRun;
 pthread_mutex_t stateMut = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t lamportMut = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t progressStateMut = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t ackCountMut = PTHREAD_MUTEX_INITIALIZER;
 struct tagNames_t
 {
     const char *name;
@@ -104,4 +105,11 @@ void changeLamport(int newLamportClock)
     }
 
     pthread_mutex_unlock(&lampMut);
+}
+
+void changeAckCount(int incAckCount)
+{
+    pthread_mutex_lock(&ackCountMut);
+    ackCount += incAckCount;
+    pthread_mutex_unlock(&ackCountMut);
 }

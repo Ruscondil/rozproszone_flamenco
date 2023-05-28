@@ -38,6 +38,7 @@ extern state_t stan;
 extern pthread_mutex_t stateMut;
 extern pthread_mutex_t progressStateMut;
 extern pthread_mutex_t lamportMut;
+extern pthread_mutex_t ackCountMut;
 
 /* zmiana stanu, obwarowana muteksem */
 void changeState(state_t);
