@@ -14,7 +14,8 @@ state_t stan = InRun;
  * być obwarowany muteksami
  */
 pthread_mutex_t stateMut = PTHREAD_MUTEX_INITIALIZER;
-
+pthread_mutex_t lamportMut = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t progressStateMut = PTHREAD_MUTEX_INITIALIZER;
 struct tagNames_t
 {
     const char *name;
@@ -55,7 +56,7 @@ void inicjuj_typ_pakietu()
 /* opis patrz util.h */
 void sendPacket(packet_t *pkt, int destination, int tag)
 {
-    lamport++;
+    changeLamport(0);
     int freepkt = 0;
     if (pkt == 0)
     {
@@ -81,4 +82,26 @@ void changeState(state_t newState)
     }
     stan = newState;
     pthread_mutex_unlock(&stateMut);
+}
+
+void changeProgressState(progressStates newProgressState)
+{
+    pthread_mutex_lock(&progressStateMut);
+    progressState = newStatef;
+    pthread_mutex_unlock(&progressStateMut);
+}
+
+void changeLamport(int newLamportClock)
+{
+    pthread_mutex_lock(&lampMut);
+    if (newLamportClock > lamport)
+    {
+        lamport = newLamportClock + 1;
+    }
+    else
+    {
+        lamport++;
+    }
+
+    pthread_mutex_unlock(&lampMut);
 }

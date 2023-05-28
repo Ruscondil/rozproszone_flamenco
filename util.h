@@ -28,14 +28,19 @@ void sendPacket(packet_t *pkt, int destination, int tag);
 
 typedef enum
 {
-    InRun,
-    InMonitor,
-    InWant,
-    InSection,
-    InFinish
+    waiting,
+    requesting,
+    free,
+    taken
 } state_t;
 extern state_t stan;
+
 extern pthread_mutex_t stateMut;
+extern pthread_mutex_t progressStateMut;
+extern pthread_mutex_t lamportMut;
+
 /* zmiana stanu, obwarowana muteksem */
 void changeState(state_t);
+void changeProgressState(progressStates);
+void changeLamport(state_t);
 #endif

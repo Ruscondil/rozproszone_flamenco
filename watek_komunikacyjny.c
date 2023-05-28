@@ -11,25 +11,39 @@ void *startKomWatek(void *ptr)
     odpowiedz.src = rank;
 
     /* Obrazuje pętlę odbierającą pakiety o różnych typach */
-    while (stan != InFinish)
+    while (true)
     {
+        changeLamport(pakiet.ts);
         debug("czekam na recv");
         MPI_Recv(&pakiet, 1, MPI_PAKIET_T, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
-        if (pakiet.ts > lamport)
-        {
-            lamport = pakiet.ts + 1;
-        }
-        else
-        {
-            lamport++;
-        }
-        switch (status.MPI_TAG)
+
+        switch (status.MPI_TAG) // w sensie TYPY PAKIETÓW z util.h
         {
         case REQUEST:
-            switch ()
+            switch (stan)
             {
-            case cos:
+            case InMonitor:
             {
+                switch (state)
+                {
+                case askingGuitarists:
+                {
+                }
+                case searchingForPartner:
+                {
+                    ackCount++;
+                }
+                case searchingForCritic:
+                {
+                    ackCount++;
+                }
+                case searchingForRoom:
+                {
+                }
+                case dancing:
+                {
+                }
+                }
             }
             }
             debug("Ktoś coś prosi. A niech ma!")

@@ -34,18 +34,19 @@ typedef enum
     Gitarzysta,
     Tancerka,
     Krytyk
-} role;
+} roles;
 
 typedef enum
 {
+    askingGuitarists,
     searchingForPartner,
     searchingForCritic,
     searchingForRoom,
     dancing
-} states;
+} progressStates;
 
 extern roles role;
-extern states state;
+extern progressStates progressstate;
 
 /* macro debug - działa jak printf, kiedy zdefiniowano
    DEBUG, kiedy DEBUG niezdefiniowane działa jak instrukcja pusta

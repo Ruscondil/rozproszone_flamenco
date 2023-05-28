@@ -80,11 +80,11 @@ void searchForPartner()
 	int prior_zapyt = lamport;
 	pkt->data = prior_zapyt;
 
-	changeState(InSend);
+	// changeState(InSend);
 	for (int i = 0; i < size; i++)
 	{
 		if (i != rank)
-			sendPacket(pkt, i, REQ);
+			sendPacket(pkt, i, REQUEST);
 	}
 	changeState(InMonitor);
 
@@ -114,7 +114,7 @@ void searchForRoom()
 	int prior_zapyt = lamport;
 	pkt->data = prior_zapyt;
 
-	changeState(InSend);
+	// changeState(InSend);
 	for (int i = 0; i < size; i++)
 	{
 		if (i == rank)

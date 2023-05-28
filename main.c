@@ -29,7 +29,7 @@ int krytycy;
 int sale;
 
 roles role = Krytyk;
-states state = searchingForPartner;
+progressStates progressState = searchingForPartner;
 
 void finalizuj()
 {
