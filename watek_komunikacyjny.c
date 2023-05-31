@@ -93,6 +93,7 @@ void *startKomWatek(void *ptr)
             }
             break;
         case RELEASE:
+
             endedDancing = TRUE;
             break;
         }

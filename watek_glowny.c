@@ -73,7 +73,6 @@ void checkPosition()
 		}
 		sleep(SEC_IN_STATE);
 	}
-
 	free(pkt);
 }
 
@@ -203,5 +202,6 @@ void waitForDanceEnd()
 	{
 		sleep(SEC_IN_STATE);
 	};
+	println("Kończę taniec z %d", dancePartner);
 	endedDancing = FALSE;
 }
