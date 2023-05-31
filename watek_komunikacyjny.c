@@ -14,10 +14,9 @@ void *startKomWatek(void *ptr)
     /* Obrazuje pętlę odbierającą pakiety o różnych typach */
     while (TRUE)
     {
-        changeLamport(pakiet.ts);
         // debug("czekam na recv");
         MPI_Recv(&pakiet, 1, MPI_PAKIET_T, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
-
+        changeLamport(pakiet.ts);
         switch (status.MPI_TAG) // w sensie TYPY PAKIETÓW z util.h
         {
         case REQUEST:
