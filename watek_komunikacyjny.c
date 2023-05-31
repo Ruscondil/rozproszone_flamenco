@@ -64,7 +64,7 @@ void *startKomWatek(void *ptr)
                 switch (pakiet.progress)
                 {
                 case checkingPosition:
-                    changeHandsomeness(maxi(handsomeness, pakiet.position)); // TODO zmienić
+                    changeHandsomeness(maxPos(handsomeness, pakiet.position)); // TODO zmienić
                     changeAckCount(1);
                     break;
                 case searchingForPartner:
@@ -82,6 +82,7 @@ void *startKomWatek(void *ptr)
                 case checkingPosition:
                     changeHandsomeness(maxi(handsomeness, pakiet.position));
                     posUp++;
+                    changeHandsomeness(maxPos(handsomeness, pakiet.position));
                     changeAckCount(1);
                     break;
                 }

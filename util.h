@@ -2,8 +2,6 @@
 #define UTILH
 #include "main.h"
 
-#define maxi(a, b) (((a) > (b)) ? (a) : (b)) // TODO zmienić
-
 typedef enum
 {
     checkingPosition,
@@ -52,6 +50,7 @@ void inicjuj_typ_pakietu();
 /* wysyłanie pakietu, skrót: wskaźnik do pakietu (0 oznacza stwórz pusty pakiet), do kogo, z jakim typem */
 void sendPacket(packet_t *pkt, int destination, int tag);
 void sendPacketToRole(packet_t *pkt, int tag, roles packetrole);
+int maxPos(int, int);
 
 extern state_t stan;
 

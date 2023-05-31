@@ -95,6 +95,16 @@ void sendPacketToRole(packet_t *pkt, int tag, roles packetrole)
     }
 }
 
+int maxPos(int a, int b)
+{
+    if (a > b)
+        return a;
+    else
+        return b;
+}
+
+/* mutexowe*/
+
 void changeState(state_t newState)
 {
     pthread_mutex_lock(&stateMut);
