@@ -56,6 +56,11 @@ void *startKomWatek(void *ptr)
             {
                 changeSearchForPartnerBuffer(pakiet.src, pakiet.position);
             }
+            else
+            {
+                sendPacket(&odpowiedz, pakiet.src, ACK);
+                break;
+            }
             break;
 
         case ACK:
