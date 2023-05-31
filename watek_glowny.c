@@ -25,7 +25,6 @@ void mainLoop()
 			checkPosition();
 			searchForPartner();
 			waitForDanceEnd();
-			//  czekanie na zakończenie roboty
 			break;
 		}
 		case Krytyk:
@@ -50,8 +49,6 @@ void checkPosition()
 	dancePartner = -1;
 
 	changeHandsomeness(lastHandsomeness);
-	// int prior_zapyt = lamport;
-	// pkt->data = prior_zapyt;
 	resetAckCount();
 
 	changeState(InSend);
