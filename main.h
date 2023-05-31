@@ -26,7 +26,7 @@ extern int ackCount;
 extern pthread_t threadKom;
 extern int lamport;
 extern int handsomeness;
-extern int addHandsomeness;
+extern int lessHandsomeBy;
 extern int lastHandsomeness;
 extern int dancePartner;
 extern int endedDancing;

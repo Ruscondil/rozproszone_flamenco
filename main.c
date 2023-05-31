@@ -16,7 +16,7 @@ int priority;
 int ackCount = 0;
 int lamport = 0;
 int handsomeness;
-int addHandsomeness;
+int lessHandsomeBy;
 int lastHandsomeness;
 int dancePartner;
 int endedDancing = FALSE;
@@ -115,7 +115,9 @@ int main(int argc, char **argv)
     {
         role = Tancerka;
     }
-    // println("Gitarzysci: %d\nTancerki: %d\nKrytycy: %d\nSale: %d\n", gitarzysci, tancerki, krytycy, sale);
+
+    // Inaczej domyślnie jest krytyk
+    //  println("Gitarzysci: %d\nTancerki: %d\nKrytycy: %d\nSale: %d\n", gitarzysci, tancerki, krytycy, sale);
 
     /* mainLoop w watek_glowny.c
      * w vi najedź kursorem na nazwę pliku i wciśnij klawisze gf

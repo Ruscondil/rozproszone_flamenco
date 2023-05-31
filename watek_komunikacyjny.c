@@ -82,7 +82,7 @@ void *startKomWatek(void *ptr)
                 case checkingPosition:
                     changeHandsomeness(maxPos(handsomeness, pakiet.position));
                     changeAckCount(1);
-                    addHandsomeness++;
+                    lessHandsomeBy++; // Kiedy dostajemy NACK to znaczy, że ktoś jest od nas przystojniejszy
                     break;
                 }
             }

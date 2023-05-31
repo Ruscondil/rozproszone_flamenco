@@ -46,7 +46,7 @@ void checkPosition()
 	pkt->position = handsomeness;
 	pkt->progress = checkingPosition;
 
-	addHandsomeness = 1;
+	lessHandsomeBy = 1;
 	dancePartner = -1;
 
 	changeHandsomeness(lastHandsomeness);
@@ -57,19 +57,15 @@ void checkPosition()
 	changeState(InSend);
 	sendPacketToRole(pkt, REQUEST, role);
 	changeState(InMonitor);
-	int maxAck = 0;
-	if (role == Gitarzysta)
-		maxAck = gitarzysci;
-	else if (role == Tancerka)
-	{
-		maxAck = tancerki;
-	}
+
+	int maxAck = (role == Gitarzysta) ? gitarzysci : tancerki;
+
 	while (stan != InFree)
 	{
 		if (ackCount >= maxAck - 1)
 		{
 			changeState(InFree);
-			changeHandsomeness(handsomeness + addHandsomeness);
+			changeHandsomeness(handsomeness + lessHandsomeBy);
 		}
 		sleep(SEC_IN_STATE);
 	}
@@ -80,7 +76,6 @@ void searchForPartner()
 {
 	setPriority();
 	changeProgressState(searchingForPartner);
-	println("Ubiegam się o partnera"); // TODO w zależności od roli
 
 	packet_t *pkt = malloc(sizeof(packet_t));
 
@@ -94,12 +89,14 @@ void searchForPartner()
 
 	if (role == Gitarzysta)
 	{
+		println("Ubiegam się o partnerkę");
 		sendPacketToRole(pkt, REQUEST, Tancerka);
 		minSend = gitarzysci;
 		maxSend = gitarzysci + tancerki;
 	}
 	else if (role == Tancerka)
 	{
+		println("Ubiegam się o partnera");
 		sendPacketToRole(pkt, REQUEST, Gitarzysta);
 		maxSend = gitarzysci;
 	}
@@ -122,7 +119,7 @@ void searchForPartner()
 				}
 			}
 		}
-		if (ackCount != 0)
+		if (ackCount != 0) // TODO czemu różny od 0
 		{
 			lastHandsomeness = handsomeness;
 			changeState(InFree);
@@ -130,7 +127,7 @@ void searchForPartner()
 		sleep(SEC_IN_STATE);
 	} while (stan != InFree);
 
-	println("Dobrałem się z %d", dancePartner);
+	println("Będę tańczyć z %d", dancePartner);
 	free(pkt);
 }
 
@@ -179,6 +176,7 @@ void dance()
 	changeState(InSend);
 	sendPacket(pkt, dancePartner, RELEASE);
 	changeState(InFree);
+	println("Kończę taniec z %d", dancePartner);
 
 	sleep(SEC_IN_STATE);
 	free(pkt);
