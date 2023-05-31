@@ -19,6 +19,7 @@ int handsomeness;
 int posUp;
 int lastHandsomeness;
 int dancePartner;
+int endedDancing = FALSE;
 
 int *searchForPartnerBuffer; // TODO zmienić
 
@@ -37,7 +38,7 @@ int krytycy;
 int sale;
 
 roles role = Krytyk;
-progressStates progressState = searchingForPartner;
+progressStates progressState = checkingPosition;
 
 void finalizuj()
 {
@@ -114,7 +115,6 @@ int main(int argc, char **argv)
     {
         role = Tancerka;
     }
-    debug("%d", role);
     // println("Gitarzysci: %d\nTancerki: %d\nKrytycy: %d\nSale: %d\n", gitarzysci, tancerki, krytycy, sale);
 
     /* mainLoop w watek_glowny.c

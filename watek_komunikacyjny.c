@@ -22,7 +22,6 @@ void *startKomWatek(void *ptr)
         {
         case REQUEST:
             odpowiedz.progress = pakiet.progress;
-
             if (pakiet.progress == checkingPosition)
             {
                 odpowiedz.position = handsomeness;
@@ -53,14 +52,12 @@ void *startKomWatek(void *ptr)
                     }
                     break;
                 case searchingForPartner:
-                    println("CZESC1 %d", pakiet.position);
                     changeSearchForPartnerBuffer(pakiet.src, pakiet.position);
                     break;
                 }
             }
             else if (pakiet.progress == searchingForPartner)
             {
-                println("CZESC2 %d", pakiet.position);
                 changeSearchForPartnerBuffer(pakiet.src, pakiet.position);
                 break;
             }
@@ -97,7 +94,7 @@ void *startKomWatek(void *ptr)
             }
             break;
         case RELEASE:
-            // done = TRUE;
+            endedDancing = TRUE;
             break;
         }
     }

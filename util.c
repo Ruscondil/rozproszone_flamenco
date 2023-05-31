@@ -25,7 +25,8 @@ struct tagNames_t
 {
     const char *name;
     int tag;
-} tagNames[] = {{"potwierdzenie", ACK}, {"odrzucenie", NACK}, {"prośbę o sekcję krytyczną", REQUEST}, {"zwolnienie sekcji krytycznej", RELEASE}};
+} tagNames[] = {{"ACK", ACK}, {"NACK", NACK}, {"REQUEST", REQUEST}, {"RELEASE", RELEASE}};
+//} tagNames[] = {{"potwierdzenie", ACK}, {"odrzucenie", NACK}, {"prośbę o sekcję krytyczną", REQUEST}, {"zwolnienie sekcji krytycznej", RELEASE}};
 
 const char *const tag2string(int tag)
 {
@@ -45,14 +46,15 @@ void inicjuj_typ_pakietu()
        brzydzimy się czymś w rodzaju MPI_Send(&typ, sizeof(pakiet_t), MPI_BYTE....
     */
     /* sklejone z stackoverflow */
-    int blocklengths[NITEMS] = {1, 1, 1};
-    MPI_Datatype typy[NITEMS] = {MPI_INT, MPI_INT, MPI_INT};
+    int blocklengths[NITEMS] = {1, 1, 1, 1};
+    MPI_Datatype typy[NITEMS] = {MPI_INT, MPI_INT, MPI_INT, MPI_INT};
 
     MPI_Aint offsets[NITEMS];
+
     offsets[0] = offsetof(packet_t, ts);
     offsets[1] = offsetof(packet_t, src);
     offsets[2] = offsetof(packet_t, progress);
-    offsets[2] = offsetof(packet_t, position);
+    offsets[3] = offsetof(packet_t, position);
 
     MPI_Type_create_struct(NITEMS, blocklengths, offsets, typy, &MPI_PAKIET_T);
 
@@ -70,8 +72,6 @@ void sendPacket(packet_t *pkt, int destination, int tag)
         freepkt = 1;
     }
     pkt->src = rank;
-    // todo dodać mutexy
-    pkt->ts = lamport;
     MPI_Send(pkt, 1, MPI_PAKIET_T, destination, tag, MPI_COMM_WORLD);
     debug("Wysyłam %s do %d\n", tag2string(tag), destination);
     if (freepkt)

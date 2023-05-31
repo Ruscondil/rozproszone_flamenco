@@ -8,4 +8,5 @@ void searchForPartner();
 void searchForCritic();
 void searchForRoom();
 void dance();
+void waitForDanceEnd();
 #endif

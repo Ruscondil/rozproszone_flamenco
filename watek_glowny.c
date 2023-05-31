@@ -14,9 +14,9 @@ void mainLoop()
 		{
 			checkPosition();
 			searchForPartner();
-			checkPosition();
-			searchForCritic();
-			searchForRoom();
+			// checkPosition();
+			// searchForCritic();
+			// searchForRoom();
 			dance();
 			break;
 		}
@@ -24,7 +24,8 @@ void mainLoop()
 		{
 			checkPosition();
 			searchForPartner();
-			// czekanie na zakończenie roboty
+			waitForDanceEnd();
+			//  czekanie na zakończenie roboty
 			break;
 		}
 		case Krytyk:
@@ -116,10 +117,8 @@ void searchForPartner()
 	{
 		for (int i = minSend; i < maxSend; i++)
 		{
-			println("ASS %d", i);
 			if (searchForPartnerBuffer[i] != -1)
 			{
-				println("ASS2");
 				if (searchForPartnerBuffer[i] == handsomeness)
 				{
 					sendPacket(pkt, i, ACK);
@@ -191,4 +190,18 @@ void dance()
 
 	sleep(SEC_IN_STATE);
 	free(pkt);
+}
+
+void waitForDanceEnd()
+{
+	println("Czekam na koniec tańca z %d", dancePartner);
+	changeProgressState(dancing);
+	setPriority();
+
+	changeState(InMonitor);
+	while (!endedDancing)
+	{
+		sleep(SEC_IN_STATE);
+	};
+	endedDancing = FALSE;
 }

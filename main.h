@@ -1,6 +1,6 @@
 #ifndef MAINH
 #define MAINH
-#define DEBUG
+// #define DEBUG
 #include <mpi.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -29,6 +29,7 @@ extern int handsomeness;
 extern int posUp;
 extern int lastHandsomeness;
 extern int dancePartner;
+extern int endedDancing;
 
 extern int *searchForPartnerBuffer;
 
