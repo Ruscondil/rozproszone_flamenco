@@ -36,18 +36,15 @@ void *startKomWatek(void *ptr)
                         if (priority > pakiet.ts || (priority == pakiet.ts && pakiet.src < rank))
                         {
                             sendPacket(&odpowiedz, pakiet.src, ACK);
-                            break;
                         }
                         else
                         {
                             sendPacket(&odpowiedz, pakiet.src, NACK);
-                            break;
                         }
                     }
                     else
                     {
                         sendPacket(&odpowiedz, pakiet.src, ACK);
-                        break;
                     }
                     break;
                 case searchingForPartner:
@@ -58,9 +55,7 @@ void *startKomWatek(void *ptr)
             else if (pakiet.progress == searchingForPartner)
             {
                 changeSearchForPartnerBuffer(pakiet.src, pakiet.position);
-                break;
             }
-
             break;
 
         case ACK:
@@ -93,7 +88,6 @@ void *startKomWatek(void *ptr)
             }
             break;
         case RELEASE:
-
             endedDancing = TRUE;
             break;
         }
