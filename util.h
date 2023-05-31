@@ -45,6 +45,10 @@ typedef struct
 #define RELEASE 4
 
 extern MPI_Datatype MPI_PAKIET_T;
+
+const char *tag2string(int tag);
+const char *role2string(roles);
+
 void inicjuj_typ_pakietu();
 
 /* wysyłanie pakietu, skrót: wskaźnik do pakietu (0 oznacza stwórz pusty pakiet), do kogo, z jakim typem */

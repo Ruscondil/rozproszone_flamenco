@@ -26,6 +26,12 @@ struct tagNames_t
     const char *name;
     int tag;
 } tagNames[] = {{"ACK", ACK}, {"NACK", NACK}, {"REQUEST", REQUEST}, {"RELEASE", RELEASE}};
+
+struct roleNames_t
+{
+    const char *name;
+    int role;
+} roleNames[] = {{"tancerka", Tancerka}, {"gitarzysta", Gitarzysta}, {"krytyk", Krytyk}};
 //} tagNames[] = {{"potwierdzenie", ACK}, {"odrzucenie", NACK}, {"prośbę o sekcję krytyczną", REQUEST}, {"zwolnienie sekcji krytycznej", RELEASE}};
 
 const char *const tag2string(int tag)
@@ -34,6 +40,16 @@ const char *const tag2string(int tag)
     {
         if (tagNames[i].tag == tag)
             return tagNames[i].name;
+    }
+    return "<unknown>";
+}
+
+const char *const role2string(roles role)
+{
+    for (int i = 0; i < sizeof(roleNames) / sizeof(struct roleNames_t); i++)
+    {
+        if (roleNames[i].role == role)
+            return roleNames[i].name;
     }
     return "<unknown>";
 }
