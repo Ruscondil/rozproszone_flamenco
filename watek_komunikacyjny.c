@@ -25,6 +25,10 @@ void *startKomWatek(void *ptr)
             {
                 odpowiedz.position = handsomeness;
             }
+            else if (pakiet.progress == checkingPositionForCritic)
+            {
+                odpowiedz.position = criticPosition;
+            }
 
             if (stan == InMonitor)
             {
@@ -50,9 +54,29 @@ void *startKomWatek(void *ptr)
                 case searchingForPartner:
                     changeSearchForPartnerBuffer(pakiet.src, pakiet.position);
                     break;
+                case checkingPositionForCritic:
+                    if (progressState == pakiet.progress)
+                    {
+                        if (priority > pakiet.ts || (priority == pakiet.ts && pakiet.src < rank))
+                        {
+                            sendPacket(&odpowiedz, pakiet.src, ACK);
+                        }
+                        else
+                        {
+                            sendPacket(&odpowiedz, pakiet.src, NACK);
+                        }
+                    }
+                    else
+                    {
+                        sendPacket(&odpowiedz, pakiet.src, ACK);
+                    }
+                    break;
+                case searchingForCritic:
+                    changeSearchForPartnerBuffer(pakiet.src, pakiet.position);
+                    break;
                 }
             }
-            else if (pakiet.progress == searchingForPartner)
+            else if (pakiet.progress == searchingForPartner || pakiet.progress == searchingForCritic)
             {
                 changeSearchForPartnerBuffer(pakiet.src, pakiet.position);
             }
@@ -76,6 +100,14 @@ void *startKomWatek(void *ptr)
                     dancePartner = pakiet.src;
                     changeAckCount(1);
                     break;
+                case checkingPositionForCritic:
+                    changeCriticPosition(maxPos(criticPosition, pakiet.position));
+                    changeAckCount(1);
+                    break;
+                case searchingForCritic:
+                    danceCritic = pakiet.src;
+                    changeAckCount(1);
+                    break;
                 }
             }
             break;
@@ -88,6 +120,11 @@ void *startKomWatek(void *ptr)
                     changeHandsomeness(maxPos(handsomeness, pakiet.position));
                     changeAckCount(1);
                     lessHandsomeBy++; // Kiedy dostajemy NACK to znaczy, że ktoś jest od nas przystojniejszy
+                    break;
+                case checkingPositionForCritic:
+                    changeCriticPosition(maxPos(criticPosition, pakiet.position));
+                    changeAckCount(1);
+                    worseInCriticPosition++;
                     break;
                 }
             }

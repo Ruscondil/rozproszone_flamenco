@@ -15,10 +15,17 @@ int rank, size;
 int priority;
 int ackCount = 0;
 int lamport = 0;
+
 int handsomeness;
 int lessHandsomeBy;
 int lastHandsomeness;
 int dancePartner;
+
+int criticPosition;
+int worseInCriticPosition;
+int lastCriticPosition;
+int danceCritic;
+
 int endedDancing = FALSE;
 
 int *searchForPartnerBuffer; // TODO zmienić
@@ -37,7 +44,7 @@ int tancerki;
 int krytycy;
 int sale;
 
-roles role = Krytyk;
+roles role = Unknown;
 progressStates progressState = checkingPosition;
 
 void finalizuj()
@@ -84,7 +91,6 @@ int main(int argc, char **argv)
     tancerki = atoi(argv[2]);
     krytycy = atoi(argv[3]);
     sale = atoi(argv[4]);
-    size = gitarzysci + tancerki + krytycy;
     MPI_Status status;
     int provided;
     MPI_Init_thread(&argc, &argv, MPI_THREAD_MULTIPLE, &provided);
@@ -115,8 +121,11 @@ int main(int argc, char **argv)
     {
         role = Tancerka;
     }
+    else if (rank < gitarzysci + tancerki + krytycy)
+    {
+        role = Krytyk;
+    }
 
-    // Inaczej domyślnie jest krytyk
     //  println("Gitarzysci: %d\nTancerki: %d\nKrytycy: %d\nSale: %d\n", gitarzysci, tancerki, krytycy, sale);
 
     /* mainLoop w watek_glowny.c

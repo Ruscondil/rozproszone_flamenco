@@ -6,6 +6,7 @@ typedef enum
 {
     checkingPosition,
     searchingForPartner,
+    checkingPositionForCritic,
     searchingForCritic,
     searchingForRoom,
     dancing
@@ -23,7 +24,8 @@ typedef enum
 {
     Gitarzysta,
     Tancerka,
-    Krytyk
+    Krytyk,
+    Unknown
 } roles;
 
 /* typ pakietu */
@@ -65,6 +67,7 @@ extern pthread_mutex_t ackCountMut;
 extern pthread_mutex_t priorityMut;
 extern pthread_mutex_t handsomenessMut;
 extern pthread_mutex_t searchForPartnerBufferMut;
+extern pthread_mutex_t criticPositionMut;
 
 /* zmiana stanu, obwarowana muteksem */
 void changeState(state_t);
@@ -75,4 +78,5 @@ void changeAckCount(int);
 void resetAckCount();
 void changeSearchForPartnerBuffer(int, int);
 void changeHandsomeness(int);
+void changeCriticPosition(int);
 #endif

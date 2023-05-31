@@ -25,10 +25,17 @@ extern int priority;
 extern int ackCount;
 extern pthread_t threadKom;
 extern int lamport;
+
 extern int handsomeness;
 extern int lessHandsomeBy;
 extern int lastHandsomeness;
 extern int dancePartner;
+
+extern int criticPosition;
+extern int worseInCriticPosition;
+extern int lastCriticPosition;
+extern int danceCritic;
+
 extern int endedDancing;
 
 extern int *searchForPartnerBuffer;

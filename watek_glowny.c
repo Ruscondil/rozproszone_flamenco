@@ -14,8 +14,8 @@ void mainLoop()
 		{
 			checkPosition();
 			searchForPartner();
-			// checkPosition();
-			// searchForCritic();
+			checkPositionCritic();
+			searchForCritic();
 			// searchForRoom();
 			dance();
 			break;
@@ -29,6 +29,9 @@ void mainLoop()
 		}
 		case Krytyk:
 		{
+			checkPositionCritic();
+			searchForCritic();
+			waitForDanceEnd();
 			break;
 		}
 		}
@@ -128,8 +131,97 @@ void searchForPartner()
 	free(pkt);
 }
 
+void checkPositionCritic()
+{
+	setPriority();
+	changeProgressState(checkingPositionForCritic);
+	println("Sprawdzam swoja pozycje dla krytyka");
+	packet_t *pkt = malloc(sizeof(packet_t));
+	pkt->ts = priority;
+	pkt->position = criticPosition;
+	pkt->progress = checkingPositionForCritic;
+
+	worseInCriticPosition = 1;
+	danceCritic = -1;
+
+	changeCriticPosition(lastCriticPosition);
+	resetAckCount();
+
+	changeState(InSend);
+	sendPacketToRole(pkt, REQUEST, role);
+	changeState(InMonitor);
+
+	int maxAck = (role == Gitarzysta) ? gitarzysci : krytycy;
+
+	while (stan != InFree)
+	{
+		if (ackCount >= maxAck - 1)
+		{
+			changeState(InFree);
+			changeCriticPosition(criticPosition + worseInCriticPosition);
+		}
+		sleep(SEC_IN_STATE);
+	}
+	free(pkt);
+}
+
 void searchForCritic()
 {
+	setPriority();
+	changeProgressState(searchingForCritic);
+
+	packet_t *pkt = malloc(sizeof(packet_t));
+
+	pkt->ts = priority;
+	pkt->position = criticPosition;
+	pkt->progress = searchingForCritic;
+
+	resetAckCount();
+	int minSend = 0, maxSend = 0;
+	changeState(InSend);
+
+	if (role == Gitarzysta)
+	{
+		println("Ubiegam się o krytyka");
+		sendPacketToRole(pkt, REQUEST, Krytyk);
+		minSend = gitarzysci + tancerki;
+		maxSend = size;
+	}
+	else if (role == Krytyk)
+	{
+		println("Ubiegam się o gitarzystę do krytykowania");
+		sendPacketToRole(pkt, REQUEST, Gitarzysta);
+		maxSend = gitarzysci;
+	}
+	changeState(InMonitor);
+
+	do
+	{
+		for (int i = minSend; i < maxSend; i++)
+		{
+			if (searchForPartnerBuffer[i] != -1)
+			{
+				if (searchForPartnerBuffer[i] == criticPosition)
+				{
+					sendPacket(pkt, i, ACK);
+					changeSearchForPartnerBuffer(i, -1);
+				}
+				else if (searchForPartnerBuffer[i] < criticPosition)
+				{
+					changeSearchForPartnerBuffer(i, -1);
+				}
+			}
+		}
+		if (ackCount != 0) // TODO czemu różny od 0
+		{
+			lastCriticPosition = criticPosition;
+			changeState(InFree);
+		}
+		sleep(SEC_IN_STATE);
+	} while (stan != InFree);
+
+	println("Będę krytykować razem z %d", danceCritic);
+	free(pkt);
 }
 
 void searchForRoom()
@@ -172,6 +264,7 @@ void dance()
 
 	changeState(InSend);
 	sendPacket(pkt, dancePartner, RELEASE);
+	sendPacket(pkt, danceCritic, RELEASE);
 	changeState(InFree);
 	println("Kończę taniec z %d", dancePartner);
 

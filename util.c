@@ -20,6 +20,7 @@ pthread_mutex_t ackCountMut = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t priorityMut = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t handsomenessMut = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t searchForPartnerBufferMut = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t criticPositionMut = PTHREAD_MUTEX_INITIALIZER;
 
 struct tagNames_t
 {
@@ -190,4 +191,11 @@ void changeHandsomeness(int newHandsomeness)
     pthread_mutex_lock(&handsomenessMut);
     handsomeness = newHandsomeness;
     pthread_mutex_unlock(&handsomenessMut);
+}
+
+void changeCriticPosition(int newPosition)
+{
+    pthread_mutex_lock(&criticPositionMut);
+    criticPosition = newPosition;
+    pthread_mutex_unlock(&criticPositionMut);
 }

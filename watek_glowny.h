@@ -6,6 +6,7 @@ void mainLoop();
 void checkPosition();
 void searchForPartner();
 void searchForCritic();
+void checkPositionCritic();
 void searchForRoom();
 void dance();
 void waitForDanceEnd();
