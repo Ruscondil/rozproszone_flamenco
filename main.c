@@ -16,7 +16,7 @@ int priority;
 int ackCount = 0;
 int lamport = 0;
 int handsomeness;
-int posUp;
+int addHandsomeness;
 int lastHandsomeness;
 int dancePartner;
 int endedDancing = FALSE;

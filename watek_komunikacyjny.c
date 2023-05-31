@@ -80,10 +80,9 @@ void *startKomWatek(void *ptr)
                 switch (pakiet.progress)
                 {
                 case checkingPosition:
-                    changeHandsomeness(maxi(handsomeness, pakiet.position));
-                    posUp++;
                     changeHandsomeness(maxPos(handsomeness, pakiet.position));
                     changeAckCount(1);
+                    addHandsomeness++;
                     break;
                 }
             }

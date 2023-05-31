@@ -46,7 +46,7 @@ void checkPosition()
 	pkt->position = handsomeness;
 	pkt->progress = checkingPosition;
 
-	posUp = 1;
+	addHandsomeness = 1;
 	dancePartner = -1;
 
 	changeHandsomeness(lastHandsomeness);
@@ -69,7 +69,7 @@ void checkPosition()
 		if (ackCount >= maxAck - 1)
 		{
 			changeState(InFree);
-			changeHandsomeness(handsomeness + posUp);
+			changeHandsomeness(handsomeness + addHandsomeness);
 		}
 		sleep(SEC_IN_STATE);
 	}
