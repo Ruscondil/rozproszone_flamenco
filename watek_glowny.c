@@ -8,98 +8,138 @@ void mainLoop()
 	int perc;
 	while (TRUE)
 	{
-		searchForPartner();
-		searchForCritic();
-		searchForRoom();
-		dance();
-		debug("Taniec skończony\n");
-	}
-	/* while (stan != InFinish)
-	{
-		switch (stan)
+		switch (role)
 		{
-		case InRun:
-			perc = random() % 100;
-			if (perc < 25)
-			{
-				debug("Perc: %d", perc);
-				println("Ubiegam się o sekcję krytyczną")
-					debug("Zmieniam stan na wysyłanie");
-				packet_t *pkt = malloc(sizeof(packet_t));
-				pkt->data = perc;
-				ackCount = 0;
-				for (int i = 0; i <= size - 1; i++)
-					if (i != rank)
-						sendPacket(pkt, i, REQUEST);
-				changeState(InWant); // w VI naciśnij ctrl-] na nazwie funkcji, ctrl+^ żeby wrócić
-									 // :w żeby zapisać, jeżeli narzeka że w pliku są zmiany
-									 // ewentualnie wciśnij ctrl+w ] (trzymasz ctrl i potem najpierw w, potem ]
-									 // między okienkami skaczesz ctrl+w i strzałki, albo ctrl+ww
-									 // okienko zamyka się :q
-									 // ZOB. regułę tags: w Makefile (naciśnij gf gdy kursor jest na nazwie pliku)
-				free(pkt);
-			} // a skoro już jesteśmy przy komendach vi, najedź kursorem na } i wciśnij %  (niestety głupieje przy komentarzach :( )
-			debug("Skończyłem myśleć");
-			break;
-		case InWant:
-			println("Czekam na wejście do sekcji krytycznej")
-				// tutaj zapewne jakiś muteks albo zmienna warunkowa
-				// bo aktywne czekanie jest BUE
-				if (ackCount == size - 1)
-					changeState(InSection);
-			break;
-		case InSection:
-			// tutaj zapewne jakiś muteks albo zmienna warunkowa
-			println("Jestem w sekcji krytycznej")
-				sleep(5);
-			// if ( perc < 25 ) {
-			debug("Perc: %d", perc);
-			println("Wychodzę z sekcji krytyczneh")
-				debug("Zmieniam stan na wysyłanie");
-			packet_t *pkt = malloc(sizeof(packet_t));
-			pkt->data = perc;
-			for (int i = 0; i <= size - 1; i++)
-				if (i != rank)
-					sendPacket(pkt, (rank + 1) % size, RELEASE);
-			changeState(InRun);
-			free(pkt);
-			//}
-			break;
-		default:
+		case Gitarzysta:
+		{
+			checkPosition();
+			searchForPartner();
+			checkPosition();
+			searchForCritic();
+			searchForRoom();
+			dance();
 			break;
 		}
+		case Tancerka:
+		{
+			checkPosition();
+			searchForPartner();
+			// czekanie na zakończenie roboty
+			break;
+		}
+		case Krytyk:
+		{
+			break;
+		}
+		}
+	}
+}
+
+void checkPosition()
+{
+	setPriority();
+	changeProgressState(checkingPosition);
+	println("Sprawdzam swoja pozycje");
+	packet_t *pkt = malloc(sizeof(packet_t));
+	pkt->ts = priority;
+	pkt->position = handsomeness;
+	pkt->progress = checkingPosition;
+
+	posUp = 1;
+	dancePartner = -1;
+
+	changeHandsomeness(lastHandsomeness);
+	// int prior_zapyt = lamport;
+	// pkt->data = prior_zapyt;
+	resetAckCount();
+
+	changeState(InSend);
+	sendPacketToRole(pkt, REQUEST, role);
+	changeState(InMonitor);
+	int maxAck = 0;
+	if (role == Gitarzysta)
+		maxAck = gitarzysci;
+	else if (role == Tancerka)
+	{
+		maxAck = tancerki;
+	}
+	while (stan != InFree)
+	{
+		if (ackCount >= maxAck - 1)
+		{
+			changeState(InFree);
+			changeHandsomeness(handsomeness + posUp);
+		}
 		sleep(SEC_IN_STATE);
-	} */
+	}
+
+	free(pkt);
 }
 
 void searchForPartner()
 {
-	// setPriority();
-	debug("Ubiegam się o tancerkę");
-	packet_t *pkt = malloc(sizeof(packet_t));
-	int prior_zapyt = lamport;
-	pkt->data = prior_zapyt;
+	setPriority();
+	changeProgressState(searchingForPartner);
+	println("Ubiegam się o partnera"); // TODO w zależności od roli
 
-	// changeState(InSend);
-	for (int i = 0; i < size; i++)
+	packet_t *pkt = malloc(sizeof(packet_t));
+
+	pkt->ts = priority;
+	pkt->position = handsomeness;
+	pkt->progress = searchingForPartner;
+
+	resetAckCount();
+
+	changeState(InSend);
+	if (role == Gitarzysta)
 	{
-		if (i != rank)
-			sendPacket(pkt, i, REQUEST);
+		sendPacketToRole(pkt, REQUEST, Tancerka);
+	}
+	else if (role == Tancerka)
+	{
+		sendPacketToRole(pkt, REQUEST, Gitarzysta);
 	}
 	changeState(InMonitor);
 
-	while (stan != InFree)
+	int minSend = 0, maxSend = 0;
+	if (role == Tancerka)
 	{
-		if (aggrementSum == size)
-		{
-			changeState(InFree);
-			sortAndChooseRival();
-		}
-		sleep(SEC_IN_STATE);
+		maxSend = gitarzysci;
+	}
+	else if (role == Gitarzysta)
+	{
+		minSend = gitarzysci;
+		maxSend = gitarzysci + tancerki;
 	}
 
-	debug("Będę walczył z %d\n", rival);
+	do
+	{
+		for (int i = minSend; i < maxSend; i++)
+		{
+			println("ASS %d", i);
+			if (searchForPartnerBuffer[i] != -1)
+			{
+				println("ASS2");
+				if (searchForPartnerBuffer[i] == handsomeness)
+				{
+					sendPacket(pkt, i, ACK);
+					changeSearchForPartnerBuffer(i, -1);
+				}
+				else if (searchForPartnerBuffer[i] < handsomeness)
+				{
+					changeSearchForPartnerBuffer(i, -1);
+				}
+			}
+		}
+		if (ackCount != 0)
+		{
+			lastHandsomeness = handsomeness;
+			changeState(InFree);
+		}
+		sleep(SEC_IN_STATE);
+	} while (stan != InFree);
 
+	println("Dobrałem się z %d", dancePartner);
 	free(pkt);
 }
 
@@ -109,7 +149,7 @@ void searchForCritic()
 
 void searchForRoom()
 {
-	debug("Ubiegam się o salę");
+	/* debug("Ubiegam się o salę");
 	packet_t *pkt = malloc(sizeof(packet_t));
 	int prior_zapyt = lamport;
 	pkt->data = prior_zapyt;
@@ -132,9 +172,23 @@ void searchForRoom()
 		sleep(SEC_IN_STATE);
 	}
 
-	free(pkt);
+	free(pkt); */
 }
 
 void dance()
 {
+	setPriority();
+	changeProgressState(dancing);
+	packet_t *pkt = malloc(sizeof(packet_t));
+	println("Tańczę z %d", dancePartner);
+
+	pkt->progress = dancing;
+	pkt->ts = priority;
+
+	changeState(InSend);
+	sendPacket(pkt, dancePartner, RELEASE);
+	changeState(InFree);
+
+	sleep(SEC_IN_STATE);
+	free(pkt);
 }

@@ -1,5 +1,6 @@
 #ifndef MAINH
 #define MAINH
+#define DEBUG
 #include <mpi.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -20,33 +21,24 @@
 /* tutaj TYLKO zapowiedzi - definicje w main.c */
 extern int rank;
 extern int size;
+extern int priority;
 extern int ackCount;
 extern pthread_t threadKom;
 extern int lamport;
+extern int handsomeness;
+extern int posUp;
+extern int lastHandsomeness;
+extern int dancePartner;
+
+extern int *searchForPartnerBuffer;
 
 extern int gitarzysci;
 extern int tancerki;
 extern int krytycy;
 extern int sale;
 
-typedef enum
-{
-    Gitarzysta,
-    Tancerka,
-    Krytyk
-} roles;
-
-typedef enum
-{
-    askingGuitarists,
-    searchingForPartner,
-    searchingForCritic,
-    searchingForRoom,
-    dancing
-} progressStates;
-
 extern roles role;
-extern progressStates progressstate;
+extern progressStates progressState;
 
 /* macro debug - działa jak printf, kiedy zdefiniowano
    DEBUG, kiedy DEBUG niezdefiniowane działa jak instrukcja pusta

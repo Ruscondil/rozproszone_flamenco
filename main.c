@@ -12,8 +12,16 @@
  *
  */
 int rank, size;
+int priority;
 int ackCount = 0;
 int lamport = 0;
+int handsomeness;
+int posUp;
+int lastHandsomeness;
+int dancePartner;
+
+int *searchForPartnerBuffer; // TODO zmienić
+
 /*
  * Każdy proces ma dwa wątki - główny i komunikacyjny
  * w plikach, odpowiednio, watek_glowny.c oraz (siurpryza) watek_komunikacyjny.c
@@ -39,6 +47,7 @@ void finalizuj()
     pthread_join(threadKom, NULL);
     MPI_Type_free(&MPI_PAKIET_T);
     MPI_Finalize();
+    free(searchForPartnerBuffer);
 }
 
 void check_thread_support(int provided)
@@ -74,21 +83,12 @@ int main(int argc, char **argv)
     tancerki = atoi(argv[2]);
     krytycy = atoi(argv[3]);
     sale = atoi(argv[4]);
-    println("Gitarzysci: %d\nTancerki: %d\nKrytycy: %d\nSale: %d\n", gitarzysci, tancerki, krytycy, sale);
-
+    size = gitarzysci + tancerki + krytycy;
     MPI_Status status;
     int provided;
     MPI_Init_thread(&argc, &argv, MPI_THREAD_MULTIPLE, &provided);
     check_thread_support(provided);
     srand(rank);
-    if (rank < gitarzysci)
-    {
-        role = Gitarzysta;
-    }
-    else if (rank < gitarzysci + tancerki)
-    {
-        role = Tancerka;
-    }
 
     /* zob. util.c oraz util.h */
     inicjuj_typ_pakietu(); // tworzy typ pakietu
@@ -99,6 +99,23 @@ int main(int argc, char **argv)
      * powrót po wciśnięciu ctrl+6
      * */
     pthread_create(&threadKom, NULL, startKomWatek, 0);
+
+    searchForPartnerBuffer = (int *)malloc(size * sizeof(int));
+    for (int i = 0; i < size; i++)
+    {
+        searchForPartnerBuffer[i] = -1;
+    }
+
+    if (rank < gitarzysci)
+    {
+        role = Gitarzysta;
+    }
+    else if (rank < gitarzysci + tancerki)
+    {
+        role = Tancerka;
+    }
+    debug("%d", role);
+    // println("Gitarzysci: %d\nTancerki: %d\nKrytycy: %d\nSale: %d\n", gitarzysci, tancerki, krytycy, sale);
 
     /* mainLoop w watek_glowny.c
      * w vi najedź kursorem na nazwę pliku i wciśnij klawisze gf

@@ -3,6 +3,7 @@
 
 /* pętla główna aplikacji: zmiany stanów itd */
 void mainLoop();
+void checkPosition();
 void searchForPartner();
 void searchForCritic();
 void searchForRoom();

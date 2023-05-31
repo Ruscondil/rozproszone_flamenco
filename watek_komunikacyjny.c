@@ -9,51 +9,95 @@ void *startKomWatek(void *ptr)
     packet_t pakiet, odpowiedz;
 
     odpowiedz.src = rank;
+    odpowiedz.ts = priority;
 
     /* Obrazuje pętlę odbierającą pakiety o różnych typach */
-    while (true)
+    while (TRUE)
     {
         changeLamport(pakiet.ts);
-        debug("czekam na recv");
+        // debug("czekam na recv");
         MPI_Recv(&pakiet, 1, MPI_PAKIET_T, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 
         switch (status.MPI_TAG) // w sensie TYPY PAKIETÓW z util.h
         {
         case REQUEST:
-            switch (stan)
+            odpowiedz.progress = pakiet.progress;
+
+            if (pakiet.progress == checkingPosition)
             {
-            case InMonitor:
+                odpowiedz.position = handsomeness;
+            }
+
+            if (stan == InMonitor)
             {
-                switch (state)
+                switch (pakiet.progress)
                 {
-                case askingGuitarists:
-                {
-                }
+                case checkingPosition:
+                    if (progressState == pakiet.progress)
+                    {
+                        if (priority > pakiet.ts || (priority == pakiet.ts && pakiet.src < rank))
+                        {
+                            sendPacket(&odpowiedz, pakiet.src, ACK);
+                            break;
+                        }
+                        else
+                        {
+                            sendPacket(&odpowiedz, pakiet.src, NACK);
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        sendPacket(&odpowiedz, pakiet.src, ACK);
+                        break;
+                    }
+                    break;
                 case searchingForPartner:
-                {
-                    ackCount++;
-                }
-                case searchingForCritic:
-                {
-                    ackCount++;
-                }
-                case searchingForRoom:
-                {
-                }
-                case dancing:
-                {
-                }
+                    println("CZESC1 %d", pakiet.position);
+                    changeSearchForPartnerBuffer(pakiet.src, pakiet.position);
+                    break;
                 }
             }
+            else if (pakiet.progress == searchingForPartner)
+            {
+                println("CZESC2 %d", pakiet.position);
+                changeSearchForPartnerBuffer(pakiet.src, pakiet.position);
+                break;
             }
-            debug("Ktoś coś prosi. A niech ma!")
-                sendPacket(0, status.MPI_SOURCE, ACK);
+
             break;
+
         case ACK:
-            debug("Dostałem ACK od %d, mam już %d", status.MPI_SOURCE, ackCount);
-            ackCount++; /* czy potrzeba tutaj muteksa? Będzie wyścig, czy nie będzie? Zastanówcie się. */
+            if (pakiet.progress == progressState)
+            {
+                switch (pakiet.progress)
+                {
+                case checkingPosition:
+                    changeHandsomeness(maxi(handsomeness, pakiet.position)); // TODO zmienić
+                    changeAckCount(1);
+                    break;
+                case searchingForPartner:
+                    dancePartner = pakiet.src;
+                    changeAckCount(1);
+                    break;
+                }
+            }
             break;
-        default:
+        case NACK:
+            if (pakiet.progress == progressState)
+            {
+                switch (pakiet.progress)
+                {
+                case checkingPosition:
+                    changeHandsomeness(maxi(handsomeness, pakiet.position));
+                    posUp++;
+                    changeAckCount(1);
+                    break;
+                }
+            }
+            break;
+        case RELEASE:
+            // done = TRUE;
             break;
         }
     }
