@@ -162,6 +162,6 @@ void changeSearchForPartnerBuffer(int index, int value)
 void changeHandsomeness(int newHandsomeness)
 {
     pthread_mutex_lock(&handsomenessMut);
-    handsomeness += newHandsomeness;
+    handsomeness = newHandsomeness;
     pthread_mutex_unlock(&handsomenessMut);
 }
