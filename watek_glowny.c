@@ -89,28 +89,21 @@ void searchForPartner()
 	pkt->progress = searchingForPartner;
 
 	resetAckCount();
-
+	int minSend = 0, maxSend = 0;
 	changeState(InSend);
+
 	if (role == Gitarzysta)
 	{
 		sendPacketToRole(pkt, REQUEST, Tancerka);
+		minSend = gitarzysci;
+		maxSend = gitarzysci + tancerki;
 	}
 	else if (role == Tancerka)
 	{
 		sendPacketToRole(pkt, REQUEST, Gitarzysta);
-	}
-	changeState(InMonitor);
-
-	int minSend = 0, maxSend = 0;
-	if (role == Tancerka)
-	{
 		maxSend = gitarzysci;
 	}
-	else if (role == Gitarzysta)
-	{
-		minSend = gitarzysci;
-		maxSend = gitarzysci + tancerki;
-	}
+	changeState(InMonitor);
 
 	do
 	{
