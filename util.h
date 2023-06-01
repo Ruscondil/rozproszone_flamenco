@@ -66,7 +66,7 @@ extern pthread_mutex_t lamportMut;
 extern pthread_mutex_t ackCountMut;
 extern pthread_mutex_t priorityMut;
 extern pthread_mutex_t handsomenessMut;
-extern pthread_mutex_t searchForPartnerBufferMut;
+extern pthread_mutex_t searchForPartnerCriticBufferMut;
 extern pthread_mutex_t criticPositionMut;
 extern pthread_mutex_t wantRoomMut;
 
@@ -77,7 +77,7 @@ void setPriority();
 void changeLamport(int);
 void changeAckCount(int);
 void resetAckCount();
-void changeSearchForPartnerBuffer(int, int);
+void changeSearchForPartnerCriticBuffer(int, int);
 void changeHandsomeness(int);
 void changeCriticPosition(int);
 void changeWantRoomBuffer(int, int);

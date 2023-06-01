@@ -72,7 +72,7 @@ void *startKomWatek(void *ptr)
                     }
                     break;
                 case searchingForCritic:
-                    changeSearchForPartnerBuffer(pakiet.src, pakiet.position);
+                    changeSearchForPartnerCriticBuffer(pakiet.src, pakiet.position);
                     break;
                 case searchingForRoom:
                     if (progressState == pakiet.progress)
@@ -99,7 +99,7 @@ void *startKomWatek(void *ptr)
             }
             else if (pakiet.progress == searchingForPartner || pakiet.progress == searchingForCritic)
             {
-                changeSearchForPartnerBuffer(pakiet.src, pakiet.position);
+                changeSearchForPartnerCriticBuffer(pakiet.src, pakiet.position);
             }
             else if (pakiet.progress == searchingForRoom && foundRoom)
             {

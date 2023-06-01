@@ -19,7 +19,7 @@ pthread_mutex_t progressStateMut = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t ackCountMut = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t priorityMut = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t handsomenessMut = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t searchForPartnerBufferMut = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t searchForPartnerCriticBufferMut = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t criticPositionMut = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t wantRoomMut = PTHREAD_MUTEX_INITIALIZER;
 
@@ -180,11 +180,11 @@ void resetAckCount()
     pthread_mutex_unlock(&ackCountMut);
 }
 
-void changeSearchForPartnerBuffer(int index, int value)
+void changeSearchForPartnerCriticBuffer(int index, int value)
 {
-    pthread_mutex_lock(&searchForPartnerBufferMut);
-    searchForPartnerBuffer[index] = value;
-    pthread_mutex_unlock(&searchForPartnerBufferMut);
+    pthread_mutex_lock(&searchForPartnerCriticBufferMut);
+    searchForPartnerCriticBuffer[index] = value;
+    pthread_mutex_unlock(&searchForPartnerCriticBufferMut);
 }
 
 void changeHandsomeness(int newHandsomeness)

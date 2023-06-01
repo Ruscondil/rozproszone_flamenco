@@ -106,20 +106,20 @@ void searchForPartner()
 	{
 		for (int i = minSend; i < maxSend; i++)
 		{
-			if (searchForPartnerBuffer[i] != -1)
+			if (searchForPartnerCriticBuffer[i] != -1)
 			{
-				if (searchForPartnerBuffer[i] == handsomeness)
+				if (searchForPartnerCriticBuffer[i] == handsomeness)
 				{
 					sendPacket(pkt, i, ACK);
-					changeSearchForPartnerBuffer(i, -1);
+					changeSearchForPartnerCriticBuffer(i, -1);
 				}
-				else if (searchForPartnerBuffer[i] < handsomeness)
+				else if (searchForPartnerCriticBuffer[i] < handsomeness)
 				{
-					changeSearchForPartnerBuffer(i, -1);
+					changeSearchForPartnerCriticBuffer(i, -1);
 				}
 			}
 		}
-		if (ackCount != 0) // TODO czemu różny od 0
+		if (ackCount != 0)
 		{
 			lastHandsomeness = handsomeness;
 			changeState(InFree);
@@ -199,20 +199,20 @@ void searchForCritic()
 	{
 		for (int i = minSend; i < maxSend; i++)
 		{
-			if (searchForPartnerBuffer[i] != -1)
+			if (searchForPartnerCriticBuffer[i] != -1)
 			{
-				if (searchForPartnerBuffer[i] == criticPosition)
+				if (searchForPartnerCriticBuffer[i] == criticPosition)
 				{
 					sendPacket(pkt, i, ACK);
-					changeSearchForPartnerBuffer(i, -1);
+					changeSearchForPartnerCriticBuffer(i, -1);
 				}
-				else if (searchForPartnerBuffer[i] < criticPosition)
+				else if (searchForPartnerCriticBuffer[i] < criticPosition)
 				{
-					changeSearchForPartnerBuffer(i, -1);
+					changeSearchForPartnerCriticBuffer(i, -1);
 				}
 			}
 		}
-		if (ackCount != 0) // TODO czemu różny od 0
+		if (ackCount != 0)
 		{
 			lastCriticPosition = criticPosition;
 			changeState(InFree);

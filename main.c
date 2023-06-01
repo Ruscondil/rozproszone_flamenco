@@ -16,7 +16,7 @@ int priority;
 int ackCount = 0;
 int lamport = 0;
 
-int *searchForPartnerBuffer; // TODO zmienić
+int *searchForPartnerCriticBuffer;
 
 int handsomeness;
 int lessHandsomeBy;
@@ -59,7 +59,7 @@ void finalizuj()
     pthread_join(threadKom, NULL);
     MPI_Type_free(&MPI_PAKIET_T);
     MPI_Finalize();
-    free(searchForPartnerBuffer);
+    free(searchForPartnerCriticBuffer);
     free(wantRoomBuffer);
 }
 
@@ -112,10 +112,10 @@ int main(int argc, char **argv)
      * */
     pthread_create(&threadKom, NULL, startKomWatek, 0);
 
-    searchForPartnerBuffer = (int *)malloc(size * sizeof(int));
+    searchForPartnerCriticBuffer = (int *)malloc(size * sizeof(int));
     for (int i = 0; i < size; i++)
     {
-        searchForPartnerBuffer[i] = -1;
+        searchForPartnerCriticBuffer[i] = -1;
     }
     wantRoomBuffer = (int *)malloc(gitarzysci * sizeof(int));
     for (int i = 0; i < gitarzysci; i++)

@@ -26,7 +26,7 @@ extern int ackCount;
 extern pthread_t threadKom;
 extern int lamport;
 
-extern int *searchForPartnerBuffer;
+extern int *searchForPartnerCriticBuffer;
 
 extern int handsomeness;
 extern int lessHandsomeBy;
