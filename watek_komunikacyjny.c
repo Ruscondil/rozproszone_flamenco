@@ -35,25 +35,6 @@ void *startKomWatek(void *ptr)
                 switch (pakiet.progress)
                 {
                 case checkingPosition:
-                    if (progressState == pakiet.progress)
-                    {
-                        if (priority > pakiet.ts || (priority == pakiet.ts && pakiet.src < rank))
-                        {
-                            sendPacket(&odpowiedz, pakiet.src, ACK);
-                        }
-                        else
-                        {
-                            sendPacket(&odpowiedz, pakiet.src, NACK);
-                        }
-                    }
-                    else
-                    {
-                        sendPacket(&odpowiedz, pakiet.src, ACK);
-                    }
-                    break;
-                case searchingForPartner:
-                    changeSearchForPartnerBuffer(pakiet.src, pakiet.position);
-                    break;
                 case checkingPositionForCritic:
                     if (progressState == pakiet.progress)
                     {
@@ -71,6 +52,7 @@ void *startKomWatek(void *ptr)
                         sendPacket(&odpowiedz, pakiet.src, ACK);
                     }
                     break;
+                case searchingForPartner:
                 case searchingForCritic:
                     changeSearchForPartnerCriticBuffer(pakiet.src, pakiet.position);
                     break;

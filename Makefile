@@ -1,7 +1,7 @@
 SOURCES=$(wildcard *.c)
 HEADERS=$(SOURCES:.c=.h)
-FLAGS=-DDEBUG -g
-#FLAGS=-g
+#FLAGS=-DDEBUG -g
+FLAGS=-g
 
 all: main
 
@@ -14,4 +14,4 @@ clean:
 	rm main a.out
 
 run: main Makefile tags
-	mpirun -np 7 ./main 3 2 1 2
+	mpirun -np 7 ./main 3 2 2 2
