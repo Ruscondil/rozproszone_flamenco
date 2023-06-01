@@ -16,6 +16,8 @@ int priority;
 int ackCount = 0;
 int lamport = 0;
 
+int *searchForPartnerBuffer; // TODO zmienić
+
 int handsomeness;
 int lessHandsomeBy;
 int lastHandsomeness;
@@ -26,9 +28,11 @@ int worseInCriticPosition;
 int lastCriticPosition;
 int danceCritic;
 
-int endedDancing = FALSE;
+int *wantRoomBuffer;
 
-int *searchForPartnerBuffer; // TODO zmienić
+int foundRoom = FALSE;
+
+int endedDancing = FALSE;
 
 /*
  * Każdy proces ma dwa wątki - główny i komunikacyjny
@@ -56,6 +60,7 @@ void finalizuj()
     MPI_Type_free(&MPI_PAKIET_T);
     MPI_Finalize();
     free(searchForPartnerBuffer);
+    free(wantRoomBuffer);
 }
 
 void check_thread_support(int provided)
@@ -111,6 +116,11 @@ int main(int argc, char **argv)
     for (int i = 0; i < size; i++)
     {
         searchForPartnerBuffer[i] = -1;
+    }
+    wantRoomBuffer = (int *)malloc(gitarzysci * sizeof(int));
+    for (int i = 0; i < gitarzysci; i++)
+    {
+        wantRoomBuffer[i] = FALSE;
     }
 
     if (rank < gitarzysci)

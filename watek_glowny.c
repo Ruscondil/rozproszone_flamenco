@@ -16,7 +16,7 @@ void mainLoop()
 			searchForPartner();
 			checkPositionCritic();
 			searchForCritic();
-			// searchForRoom();
+			searchForRoom();
 			dance();
 			break;
 		}
@@ -226,30 +226,32 @@ void searchForCritic()
 
 void searchForRoom()
 {
-	/* debug("Ubiegam się o salę");
+	setPriority();
+	changeProgressState(searchingForRoom);
+	println("Ubiegam się o salę");
+
 	packet_t *pkt = malloc(sizeof(packet_t));
-	int prior_zapyt = lamport;
-	pkt->data = prior_zapyt;
+	pkt->progress = searchingForRoom;
+	pkt->ts = priority;
 
-	// changeState(InSend);
-	for (int i = 0; i < size; i++)
-	{
-		if (i == rank)
-			continue;
-		sendPacket(pkt, i, REQUEST);
-	}
+	changeState(InSend);
+	resetAckCount();
+
+	sendPacketToRole(pkt, REQUEST, Gitarzysta);
+
 	changeState(InMonitor);
-
 	while (stan != InFree)
 	{
-		if (ackCount == gitarzysci - sale)
+		if (sale - (gitarzysci - ackCount - 1) > 0)
 		{
-			changeState(InSection);
+			debug("Zarezerwowałem salę");
+			foundRoom = TRUE;
+			changeState(InFree);
 		}
 		sleep(SEC_IN_STATE);
 	}
 
-	free(pkt); */
+	free(pkt);
 }
 
 void dance()
@@ -259,12 +261,24 @@ void dance()
 	packet_t *pkt = malloc(sizeof(packet_t));
 	println("Tańczę z %d", dancePartner);
 
-	pkt->progress = dancing;
 	pkt->ts = priority;
 
 	changeState(InSend);
+
+	pkt->progress = searchingForRoom;
+	for (int i = 0; i < gitarzysci; i++)
+	{
+		if (wantRoomBuffer[i])
+		{
+			changeWantRoomBuffer(i, FALSE);
+			sendPacket(pkt, i, ACK);
+		}
+	}
+
+	pkt->progress = dancing;
 	sendPacket(pkt, dancePartner, RELEASE);
 	sendPacket(pkt, danceCritic, RELEASE);
+
 	changeState(InFree);
 	println("Kończę taniec z %d", dancePartner);
 

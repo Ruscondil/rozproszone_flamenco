@@ -21,6 +21,7 @@ pthread_mutex_t priorityMut = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t handsomenessMut = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t searchForPartnerBufferMut = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t criticPositionMut = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t wantRoomMut = PTHREAD_MUTEX_INITIALIZER;
 
 struct tagNames_t
 {
@@ -198,4 +199,11 @@ void changeCriticPosition(int newPosition)
     pthread_mutex_lock(&criticPositionMut);
     criticPosition = newPosition;
     pthread_mutex_unlock(&criticPositionMut);
+}
+
+void changeWantRoomBuffer(int index, int value)
+{
+    pthread_mutex_lock(&wantRoomMut);
+    wantRoomBuffer[index] = value;
+    pthread_mutex_unlock(&wantRoomMut);
 }

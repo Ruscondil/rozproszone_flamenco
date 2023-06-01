@@ -26,6 +26,8 @@ extern int ackCount;
 extern pthread_t threadKom;
 extern int lamport;
 
+extern int *searchForPartnerBuffer;
+
 extern int handsomeness;
 extern int lessHandsomeBy;
 extern int lastHandsomeness;
@@ -36,9 +38,10 @@ extern int worseInCriticPosition;
 extern int lastCriticPosition;
 extern int danceCritic;
 
-extern int endedDancing;
+extern int *wantRoomBuffer;
+extern int foundRoom;
 
-extern int *searchForPartnerBuffer;
+extern int endedDancing;
 
 extern int gitarzysci;
 extern int tancerki;

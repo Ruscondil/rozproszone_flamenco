@@ -74,11 +74,36 @@ void *startKomWatek(void *ptr)
                 case searchingForCritic:
                     changeSearchForPartnerBuffer(pakiet.src, pakiet.position);
                     break;
+                case searchingForRoom:
+                    if (progressState == pakiet.progress)
+                    {
+                        if (priority < pakiet.ts || (priority == pakiet.ts && pakiet.src > rank))
+                        {
+                            changeWantRoomBuffer(pakiet.src, TRUE);
+                        }
+                        else
+                        {
+                            sendPacket(&odpowiedz, pakiet.src, ACK);
+                        }
+                    }
+                    else if (progressState == dancing)
+                    {
+                        changeWantRoomBuffer(pakiet.src, TRUE);
+                    }
+                    else
+                    {
+                        sendPacket(&odpowiedz, pakiet.src, ACK);
+                    }
+                    break;
                 }
             }
             else if (pakiet.progress == searchingForPartner || pakiet.progress == searchingForCritic)
             {
                 changeSearchForPartnerBuffer(pakiet.src, pakiet.position);
+            }
+            else if (pakiet.progress == searchingForRoom && foundRoom)
+            {
+                changeWantRoomBuffer(pakiet.src, TRUE);
             }
             else
             {
@@ -108,6 +133,9 @@ void *startKomWatek(void *ptr)
                     danceCritic = pakiet.src;
                     changeAckCount(1);
                     break;
+                case searchingForRoom:
+                    changeAckCount(1);
+                    break;
                 }
             }
             break;
@@ -125,6 +153,9 @@ void *startKomWatek(void *ptr)
                     changeCriticPosition(maxPos(criticPosition, pakiet.position));
                     changeAckCount(1);
                     worseInCriticPosition++;
+                    break;
+                case searchingForRoom:
+                    changeAckCount(1);
                     break;
                 }
             }
