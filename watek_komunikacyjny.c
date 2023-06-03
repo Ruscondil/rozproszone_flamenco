@@ -57,23 +57,28 @@ void *startKomWatek(void *ptr)
                     changeSearchForPartnerCriticBuffer(pakiet.src, pakiet.position);
                     break;
                 case searchingForRoom:
+                    println("TESTOWANIE od%d", pakiet.src);
                     if (progressState == pakiet.progress)
                     {
                         if (priority < pakiet.ts || (priority == pakiet.ts && pakiet.src > rank))
                         {
+                            println("TEST1 p:%d, pts: %d", priority, pakiet.ts);
                             changeWantRoomBuffer(pakiet.src, TRUE);
                         }
                         else
                         {
+                            println("TEST2 p:%d, pts: %d", priority, pakiet.ts);
                             sendPacket(&odpowiedz, pakiet.src, ACK);
                         }
                     }
                     else if (progressState == dancing)
                     {
+                        println("TEST3");
                         changeWantRoomBuffer(pakiet.src, TRUE);
                     }
                     else
                     {
+                        println("TEST4");
                         sendPacket(&odpowiedz, pakiet.src, ACK);
                     }
                     break;
@@ -85,12 +90,12 @@ void *startKomWatek(void *ptr)
             }
             else if (pakiet.progress == searchingForRoom && foundRoom)
             {
+                println("TEST5 %d", foundRoom);
                 changeWantRoomBuffer(pakiet.src, TRUE);
             }
             else
             {
                 sendPacket(&odpowiedz, pakiet.src, ACK);
-                break;
             }
             break;
 
@@ -128,13 +133,13 @@ void *startKomWatek(void *ptr)
                 {
                 case checkingPosition:
                     changeHandsomeness(maxPos(handsomeness, pakiet.position));
-                    changeAckCount(1);
                     lessHandsomeBy++; // Kiedy dostajemy NACK to znaczy, że ktoś jest od nas przystojniejszy
+                    changeAckCount(1);
                     break;
                 case checkingPositionForCritic:
                     changeCriticPosition(maxPos(criticPosition, pakiet.position));
-                    changeAckCount(1);
                     worseInCriticPosition++;
+                    changeAckCount(1);
                     break;
                 case searchingForRoom:
                     changeAckCount(1);

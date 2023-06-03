@@ -28,13 +28,13 @@ struct tagNames_t
     const char *name;
     int tag;
 } tagNames[] = {{"ACK", ACK}, {"NACK", NACK}, {"REQUEST", REQUEST}, {"RELEASE", RELEASE}};
+//} tagNames[] = {{"potwierdzenie", ACK}, {"odrzucenie", NACK}, {"prośbę o sekcję krytyczną", REQUEST}, {"zwolnienie sekcji krytycznej", RELEASE}};
 
 struct roleNames_t
 {
     const char *name;
     int role;
 } roleNames[] = {{"tancerka", Tancerka}, {"gitarzysta", Gitarzysta}, {"krytyk", Krytyk}};
-//} tagNames[] = {{"potwierdzenie", ACK}, {"odrzucenie", NACK}, {"prośbę o sekcję krytyczną", REQUEST}, {"zwolnienie sekcji krytycznej", RELEASE}};
 
 const char *const tag2string(int tag)
 {
@@ -82,10 +82,11 @@ void inicjuj_typ_pakietu()
 /* opis patrz util.h */
 void sendPacket(packet_t *pkt, int destination, int tag)
 {
-    changeLamport(0);
+
     pkt->src = rank;
     MPI_Send(pkt, 1, MPI_PAKIET_T, destination, tag, MPI_COMM_WORLD);
     debug("Wysyłam %s do %d\n", tag2string(tag), destination);
+    changeLamport(0);
 }
 
 void sendPacketToRole(packet_t *pkt, int tag, roles packetrole)
@@ -144,11 +145,11 @@ void changeProgressState(progressStates newProgressState)
 
 void setPriority()
 {
-    pthread_mutex_lock(&priorityMut);
     pthread_mutex_lock(&lamportMut);
+    pthread_mutex_lock(&priorityMut);
     priority = lamport;
-    pthread_mutex_unlock(&lamportMut);
     pthread_mutex_unlock(&priorityMut);
+    pthread_mutex_unlock(&lamportMut);
 }
 
 void changeLamport(int newLamportClock)

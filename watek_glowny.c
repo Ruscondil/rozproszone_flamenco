@@ -40,9 +40,10 @@ void mainLoop()
 
 void checkPosition()
 {
+	changeProgressState(checkingPosition);
 	setPriority();
 	changeHandsomeness(lastHandsomeness);
-	changeProgressState(checkingPosition);
+
 	println("Sprawdzam swoja pozycje");
 	packet_t *pkt = malloc(sizeof(packet_t));
 	pkt->ts = priority;
@@ -56,10 +57,9 @@ void checkPosition()
 
 	changeState(InSend);
 	sendPacketToRole(pkt, REQUEST, role);
+
 	changeState(InMonitor);
-
 	int maxAck = (role == Gitarzysta) ? gitarzysci : tancerki;
-
 	while (stan != InFree)
 	{
 		if (ackCount >= maxAck - 1)
@@ -74,9 +74,9 @@ void checkPosition()
 
 void searchForPartner()
 {
-	setPriority();
-	changeProgressState(searchingForPartner);
 
+	changeProgressState(searchingForPartner);
+	setPriority();
 	packet_t *pkt = malloc(sizeof(packet_t));
 
 	pkt->ts = priority;
@@ -100,8 +100,8 @@ void searchForPartner()
 		sendPacketToRole(pkt, REQUEST, Gitarzysta);
 		maxSend = gitarzysci;
 	}
-	changeState(InMonitor);
 
+	changeState(InMonitor);
 	do
 	{
 		for (int i = minSend; i < maxSend; i++)
@@ -133,9 +133,10 @@ void searchForPartner()
 
 void checkPositionCritic()
 {
+	changeProgressState(checkingPositionForCritic);
 	setPriority();
 	changeCriticPosition(lastCriticPosition);
-	changeProgressState(checkingPositionForCritic);
+
 	println("Sprawdzam swoja pozycje dla krytyka");
 	packet_t *pkt = malloc(sizeof(packet_t));
 	pkt->ts = priority;
@@ -167,8 +168,8 @@ void checkPositionCritic()
 
 void searchForCritic()
 {
-	setPriority();
 	changeProgressState(searchingForCritic);
+	setPriority();
 
 	packet_t *pkt = malloc(sizeof(packet_t));
 
@@ -226,17 +227,17 @@ void searchForCritic()
 
 void searchForRoom()
 {
-	setPriority();
 	changeProgressState(searchingForRoom);
+	setPriority();
 	println("Ubiegam się o salę");
 
 	packet_t *pkt = malloc(sizeof(packet_t));
 	pkt->progress = searchingForRoom;
 	pkt->ts = priority;
 
-	changeState(InSend);
 	resetAckCount();
 
+	changeState(InSend);
 	sendPacketToRole(pkt, REQUEST, Gitarzysta);
 
 	changeState(InMonitor);
@@ -244,7 +245,7 @@ void searchForRoom()
 	{
 		if (sale - (gitarzysci - ackCount - 1) > 0)
 		{
-			debug("Zarezerwowałem salę");
+			println("Zarezerwowałem salę");
 			foundRoom = TRUE;
 			changeState(InFree);
 		}
@@ -256,15 +257,16 @@ void searchForRoom()
 
 void dance()
 {
-	setPriority();
 	changeProgressState(dancing);
-	packet_t *pkt = malloc(sizeof(packet_t));
+	setPriority();
 	println("Tańczę z %d", dancePartner);
+	packet_t *pkt = malloc(sizeof(packet_t));
 
 	pkt->ts = priority;
 
 	changeState(InSend);
-
+	foundRoom = FALSE;
+	println("Już nie zajmuję sali");
 	pkt->progress = searchingForRoom;
 	for (int i = 0; i < gitarzysci; i++)
 	{
@@ -313,6 +315,6 @@ void waitForDanceEnd()
 	{
 		println("Kończę krytykować taniec %d", danceCritic);
 	}
-
 	endedDancing = FALSE;
+	changeState(InFree);
 }
