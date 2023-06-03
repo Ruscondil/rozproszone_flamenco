@@ -41,6 +41,7 @@ void mainLoop()
 void checkPosition()
 {
 	setPriority();
+	changeHandsomeness(lastHandsomeness);
 	changeProgressState(checkingPosition);
 	println("Sprawdzam swoja pozycje");
 	packet_t *pkt = malloc(sizeof(packet_t));
@@ -51,7 +52,6 @@ void checkPosition()
 	lessHandsomeBy = 1;
 	dancePartner = -1;
 
-	changeHandsomeness(lastHandsomeness);
 	resetAckCount();
 
 	changeState(InSend);
@@ -134,6 +134,7 @@ void searchForPartner()
 void checkPositionCritic()
 {
 	setPriority();
+	changeCriticPosition(lastCriticPosition);
 	changeProgressState(checkingPositionForCritic);
 	println("Sprawdzam swoja pozycje dla krytyka");
 	packet_t *pkt = malloc(sizeof(packet_t));
@@ -144,7 +145,6 @@ void checkPositionCritic()
 	worseInCriticPosition = 1;
 	danceCritic = -1;
 
-	changeCriticPosition(lastCriticPosition);
 	resetAckCount();
 
 	changeState(InSend);
@@ -288,7 +288,15 @@ void dance()
 
 void waitForDanceEnd()
 {
-	println("Czekam na koniec tańca z %d", dancePartner);
+	if (role == Tancerka)
+	{
+		println("Czekam na koniec tańca z %d", dancePartner);
+	}
+	else
+	{
+		println("Czekam na krytykowanie tańca %d", danceCritic);
+	}
+
 	changeProgressState(dancing);
 	setPriority();
 
@@ -297,6 +305,14 @@ void waitForDanceEnd()
 	{
 		sleep(SEC_IN_STATE);
 	};
-	println("Kończę taniec z %d", dancePartner);
+	if (role == Tancerka)
+	{
+		println("Kończę taniec z %d", dancePartner);
+	}
+	else
+	{
+		println("Kończę krytykować taniec %d", danceCritic);
+	}
+
 	endedDancing = FALSE;
 }
