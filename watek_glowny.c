@@ -44,16 +44,16 @@ void checkPosition()
 	setPriority();
 	changeHandsomeness(lastHandsomeness);
 
+	resetAckCount();
+
 	println("Sprawdzam swoja pozycje");
+	lessHandsomeBy = 1;
+	dancePartner = -1;
+
 	packet_t *pkt = malloc(sizeof(packet_t));
 	pkt->ts = priority;
 	pkt->position = handsomeness;
 	pkt->progress = checkingPosition;
-
-	lessHandsomeBy = 1;
-	dancePartner = -1;
-
-	resetAckCount();
 
 	changeState(InSend);
 	sendPacketToRole(pkt, REQUEST, role);
@@ -64,8 +64,8 @@ void checkPosition()
 	{
 		if (ackCount >= maxAck - 1)
 		{
-			changeState(InFree);
 			changeHandsomeness(handsomeness + lessHandsomeBy);
+			changeState(InFree);
 		}
 		sleep(SEC_IN_STATE);
 	}
@@ -78,10 +78,9 @@ void searchForPartner()
 	changeProgressState(searchingForPartner);
 	setPriority();
 	packet_t *pkt = malloc(sizeof(packet_t));
-
+	pkt->progress = searchingForPartner;
 	pkt->ts = priority;
 	pkt->position = handsomeness;
-	pkt->progress = searchingForPartner;
 
 	resetAckCount();
 	int minSend = 0, maxSend = 0;
@@ -137,16 +136,16 @@ void checkPositionCritic()
 	setPriority();
 	changeCriticPosition(lastCriticPosition);
 
-	println("Sprawdzam swoja pozycje dla krytyka");
-	packet_t *pkt = malloc(sizeof(packet_t));
-	pkt->ts = priority;
-	pkt->position = criticPosition;
-	pkt->progress = checkingPositionForCritic;
+	resetAckCount();
 
 	worseInCriticPosition = 1;
 	danceCritic = -1;
 
-	resetAckCount();
+	println("Sprawdzam swoja pozycje dla krytyka");
+	packet_t *pkt = malloc(sizeof(packet_t));
+	pkt->position = criticPosition;
+	pkt->ts = priority;
+	pkt->progress = checkingPositionForCritic;
 
 	changeState(InSend);
 	sendPacketToRole(pkt, REQUEST, role);
@@ -229,13 +228,12 @@ void searchForRoom()
 {
 	changeProgressState(searchingForRoom);
 	setPriority();
+	resetAckCount();
 	println("Ubiegam się o salę");
 
 	packet_t *pkt = malloc(sizeof(packet_t));
 	pkt->progress = searchingForRoom;
 	pkt->ts = priority;
-
-	resetAckCount();
 
 	changeState(InSend);
 	sendPacketToRole(pkt, REQUEST, Gitarzysta);
@@ -290,6 +288,9 @@ void dance()
 
 void waitForDanceEnd()
 {
+	changeProgressState(dancing);
+	setPriority();
+
 	if (role == Tancerka)
 	{
 		println("Czekam na koniec tańca z %d", dancePartner);
@@ -298,9 +299,6 @@ void waitForDanceEnd()
 	{
 		println("Czekam na krytykowanie tańca %d", danceCritic);
 	}
-
-	changeProgressState(dancing);
-	setPriority();
 
 	changeState(InMonitor);
 	while (!endedDancing)

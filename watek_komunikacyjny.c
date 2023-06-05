@@ -19,8 +19,12 @@ void *startKomWatek(void *ptr)
         changeLamport(pakiet.ts);
         switch (status.MPI_TAG) // w sensie TYPY PAKIETÓW z util.h
         {
+        case RELEASE:
+            endedDancing = TRUE;
+            break;
         case REQUEST:
             odpowiedz.progress = pakiet.progress;
+
             if (pakiet.progress == checkingPosition)
             {
                 odpowiedz.position = handsomeness;
@@ -38,13 +42,13 @@ void *startKomWatek(void *ptr)
                 case checkingPositionForCritic:
                     if (progressState == pakiet.progress)
                     {
-                        if (priority > pakiet.ts || (priority == pakiet.ts && pakiet.src < rank))
+                        if (priority <= pakiet.ts && (priority != pakiet.ts || pakiet.src >= rank))
                         {
-                            sendPacket(&odpowiedz, pakiet.src, ACK);
+                            sendPacket(&odpowiedz, pakiet.src, NACK);
                         }
                         else
                         {
-                            sendPacket(&odpowiedz, pakiet.src, NACK);
+                            sendPacket(&odpowiedz, pakiet.src, ACK);
                         }
                     }
                     else
@@ -57,28 +61,23 @@ void *startKomWatek(void *ptr)
                     changeSearchForPartnerCriticBuffer(pakiet.src, pakiet.position);
                     break;
                 case searchingForRoom:
-                    println("TESTOWANIE od%d", pakiet.src);
                     if (progressState == pakiet.progress)
                     {
-                        if (priority < pakiet.ts || (priority == pakiet.ts && pakiet.src > rank))
+                        if (priority >= pakiet.ts && (priority != pakiet.ts || pakiet.src <= rank))
                         {
-                            println("TEST1 p:%d, pts: %d", priority, pakiet.ts);
                             changeWantRoomBuffer(pakiet.src, TRUE);
                         }
                         else
                         {
-                            println("TEST2 p:%d, pts: %d", priority, pakiet.ts);
                             sendPacket(&odpowiedz, pakiet.src, ACK);
                         }
                     }
                     else if (progressState == dancing)
                     {
-                        println("TEST3");
                         changeWantRoomBuffer(pakiet.src, TRUE);
                     }
                     else
                     {
-                        println("TEST4");
                         sendPacket(&odpowiedz, pakiet.src, ACK);
                     }
                     break;
@@ -90,7 +89,6 @@ void *startKomWatek(void *ptr)
             }
             else if (pakiet.progress == searchingForRoom && foundRoom)
             {
-                println("TEST5 %d", foundRoom);
                 changeWantRoomBuffer(pakiet.src, TRUE);
             }
             else
@@ -146,9 +144,6 @@ void *startKomWatek(void *ptr)
                     break;
                 }
             }
-            break;
-        case RELEASE:
-            endedDancing = TRUE;
             break;
         }
     }

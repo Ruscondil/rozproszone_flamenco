@@ -110,7 +110,6 @@ int main(int argc, char **argv)
      * w vi najedź kursorem na nazwę pliku i wciśnij klawisze gf
      * powrót po wciśnięciu ctrl+6
      * */
-    pthread_create(&threadKom, NULL, startKomWatek, 0);
 
     searchForPartnerCriticBuffer = (int *)malloc(size * sizeof(int));
     for (int i = 0; i < size; i++)
@@ -135,7 +134,7 @@ int main(int argc, char **argv)
     {
         role = Krytyk;
     }
-
+    pthread_create(&threadKom, NULL, startKomWatek, 0);
     //  println("Gitarzysci: %d\nTancerki: %d\nKrytycy: %d\nSale: %d\n", gitarzysci, tancerki, krytycy, sale);
 
     /* mainLoop w watek_glowny.c
